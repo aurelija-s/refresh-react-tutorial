@@ -10,7 +10,7 @@ function App() {
         paddingTop: "1rem",
       }}
     >
-      <h1 className="title">Pokemon Search!</h1>
+      <h1 className="title">Pokemon Search!!</h1>
       <table widt="100%">
         <thead>
         <tr>
