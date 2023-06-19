@@ -80,24 +80,41 @@ const Input = styled.input`
   padding: 0.2rem;
 `;
 
-function App() {
-  const [filter, filterSet] = React.useState("");
-  const [pokemon, pokemonSet] = React.useState([]);
-  const [selectedItem, selectedItemSet] = React.useState(null);
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filter: "",
+      pokemon: [],
+      selectedItem: null,
+    }
+  }
 
-React.useEffect(() => {
-  fetch("http://localhost:3000/starting-react/pokemon.json")
-  .then(resp => resp.json())
-    .then (data => pokemonSet(data));
-}, [])
+  componentDidMount() {
+    fetch("http://localhost:3000/starting-react/pokemon.json")
+      .then ((resp) => resp.json())
+      .then ((pokemon) => 
+          this.setState({
+            ...this.state,
+            pokemon,
+          })
+          );
+  }
 
-  return (
+  render() {
+      return (
     <Container>
       <Title>Pokemon Search!!</Title>
       
       <TwoColumnLayout>
         <div>
-        <Input value={filter} onChange={(evt) => filterSet(evt.target.value)} />
+        <Input 
+            value={this.state.filter} 
+            onChange={(evt) => this.setState({
+             ...this.state, 
+             filter: evt.target.value
+          })} 
+        />
         <table widt="100%">
         <thead>
           <tr>
@@ -106,19 +123,36 @@ React.useEffect(() => {
           </tr>
         </thead>
         <tbody>
-          {pokemon
-          .filter((pokemon) => pokemon.name.english.toLowerCase().includes(filter.toLowerCase())
+          {this.state.pokemon
+          .filter((pokemon) => pokemon.name.english.toLowerCase().includes(this.state.filter.toLowerCase())
           )
           .slice(0, 20).map((pokemon) => (
-             <PokemonRow pokemon={pokemon} key = {pokemon.id} onSelect={(pokemon) => selectedItemSet(pokemon)}/>
+             <PokemonRow 
+             pokemon={pokemon} 
+             key = {pokemon.id} 
+             onSelect={(pokemon) => 
+              this.setState({
+                ...this.state,
+                selectedItem: pokemon,
+             })
+            }
+             />
           ))}
         </tbody>
       </table>
         </div>
-      {selectedItem && <PokemonInfo { ... selectedItem} />}
+      {this.state.selectedItem && <PokemonInfo { ... this.state.selectedItem} />}
       </TwoColumnLayout>
       </Container>
   );
+  }
 }
+
+/*
+
+ React.useEffect(() => {
+  
+}, []);
+*/
 
 export default App;
